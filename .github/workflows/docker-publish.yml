@@ -9,7 +9,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository | lower }}
+  IMAGE_NAME: gpt-researcher  # Hardcoded lowercase repository name
 
 jobs:
   build-and-push-image:
