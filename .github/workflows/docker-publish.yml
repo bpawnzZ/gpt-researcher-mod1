@@ -49,22 +49,19 @@ jobs:
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
-          load: true
-          tags: ${{ steps.meta.outputs.tags }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Push Docker image
-        if: github.event_name != 'pull_request'
-        run: |
-          docker push ${{ steps.meta.outputs.tags }}
 
       - name: Verify image push
         if: github.event_name != 'pull_request'
         run: |
           echo "Checking if image was pushed successfully"
-          docker manifest inspect ${{ steps.meta.outputs.tags }} || echo "Image push failed"
+          docker manifest inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || echo "Image push failed"
