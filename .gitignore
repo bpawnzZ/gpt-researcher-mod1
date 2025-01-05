@@ -2,6 +2,7 @@
 .env
 .venv
 .envrc
+docker-compose.override.yml
 
 #Ignore Virtual Env
 env/
